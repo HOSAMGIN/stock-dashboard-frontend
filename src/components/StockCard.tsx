@@ -1,6 +1,10 @@
 import React, { useState } from "react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useStockNews } from "@/hooks/useStockNews";
+import { Newspaper, BarChart2 as ChartIcon, ExternalLink, Clock } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
 import { RsiGauge } from "@/components/RsiGauge";
 import { DeviationChart } from "@/components/DeviationChart";
 import { BollingerChart } from "@/components/BollingerChart";
@@ -32,7 +36,13 @@ interface StockCardProps {
 
 export function StockCard({ data, index }: StockCardProps) {
   const [showAdvanced, setShowAdvanced] = useState(false);
+  const [activeTab, setActiveTab] = useState<"chart" | "news">("chart");
   const { colors, order } = useChartSettingsContext();
+
+  const { data: newsData, isLoading: newsLoading, isError: newsError } = useStockNews(
+    data.symbol,
+    activeTab === "news"
+  );
 
   const isUp = data.changePercent > 0;
   const ChangeIcon = isUp ? ArrowUpRight : ArrowDownRight;
